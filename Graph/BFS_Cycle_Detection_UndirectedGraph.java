@@ -13,61 +13,52 @@ One-line step points for the BFS Cycle Detection solution in an Undirected Graph
 
 import java.util.*;
 
-public class BFS_CycleDetection_UndirectedGraph {
+public class BFS_Cycle_Detection_UndirectedGraph {
 
-
-    static Boolean BFS_isCycle( ArrayList<ArrayList<Integer>> graph, int start){
-
+    static Boolean BFS_isCycle(ArrayList<ArrayList<Integer>> graph, int start) {
 
         int v = graph.size();
-        int parentArr[] = new int[v];
-        for(int i=0; i<v; i++){
-            parentArr[i]= -1;
-        }
+        int parentArr[] = new int[v];  
+        Arrays.fill(parentArr, -1);    
+
         Boolean visited[] = new Boolean[v];
-        for(int i=0; i<v; i++){
-            visited[i] = false;
-        }
+        Arrays.fill(visited, false);   
 
         Queue<Integer> qu = new LinkedList<>();
 
-        qu.offer(start);
+        qu.offer(start);    
         visited[start] = true;
 
-        while(!qu.isEmpty()){
+        while (!qu.isEmpty()) {
             int front = qu.poll();
 
-            for(int neighbor : graph.get(front)){
-                 // If the neighbor is not visited, mark it as visited and add to queue
-                if(!visited[neighbor]){
+            for (int neighbor : graph.get(front)) {
+                // If the neighbor is not visited, mark it as visited and add to queue
+                if (!visited[neighbor]) {
                     qu.offer(neighbor);
                     visited[neighbor] = true;
-                    parentArr[neighbor] = front; // Update the parent of the neighbor
+                    parentArr[neighbor] = front;  // Update the parent of the neighbor
                 }
                 // If the neighbor is visited and is not the parent, a cycle is detected
-                else if(visited[neighbor] && parentArr[front]!=neighbor){
+                else if (parentArr[front] != neighbor) { 
+                    System.out.println("Front: " + front + " Neighbor: " + neighbor);
                     return true;
                 }
             }
         }
 
-        return false;
-
-
-
+        return false;  
     }
 
-    static void addEdge(ArrayList<ArrayList<Integer>> graph, int v1, int v2, Boolean isBidir){
-
+    static void addEdge(ArrayList<ArrayList<Integer>> graph, int v1, int v2, Boolean isBidir) {
         graph.get(v1).add(v2);
 
-        if(isBidir){
+        if (isBidir) {
             graph.get(v2).add(v1);
         }
-
     }
 
-    public static void main(String args[]){
+    public static void main(String args[]) {
 
         Scanner sc = new Scanner(System.in);
 
@@ -80,15 +71,13 @@ public class BFS_CycleDetection_UndirectedGraph {
         System.out.print("Is your graph biDirectional (true/false): ");
         Boolean isBidir = sc.nextBoolean();
 
-
         ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
-        for(int i=0; i<v; i++){
+        for (int i = 0; i < v; i++) {
             graph.add(new ArrayList<>());
         }
 
-
         System.out.print("\nEnter all the vertices connections (v1,v2) [0 based indexing only]: ");
-        for(int i=0; i<e; i++){
+        for (int i = 0; i < e; i++) {
 
             int v1 = sc.nextInt();
             int v2 = sc.nextInt();
@@ -96,12 +85,10 @@ public class BFS_CycleDetection_UndirectedGraph {
             addEdge(graph, v1, v2, isBidir);
         }
 
-        
-
         System.out.println("\nGraph generated: ");
-        for(int i=0; i<v; i++){
+        for (int i = 0; i < v; i++) {
             System.out.print(i + " --> ");
-            for(int neighbors : graph.get(i)){
+            for (int neighbors : graph.get(i)) {
                 System.out.print(neighbors + " ");
             }
             System.out.println(" ");
@@ -110,20 +97,14 @@ public class BFS_CycleDetection_UndirectedGraph {
         System.out.print("\nEnter your starting vertex: ");
         int start = sc.nextInt();
 
-
         Boolean cycle = BFS_isCycle(graph, start);
 
-        if(cycle == true){
+        if (cycle == true) {
             System.out.println("Cycle Detected !");
-        }
-        else{
+        } else {
             System.out.println("Cycle NOT Detected !");
         }
 
         sc.close();
-
-
-        
     }
-    
 }
