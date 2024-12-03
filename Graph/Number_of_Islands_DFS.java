@@ -18,9 +18,9 @@ In summary, DFS is preferred for these problems because it naturally explores co
 
 import java.util.*;
 
-public class Number_of_Islands {
+public class Number_of_Islands_DFS {
 
-    static void dfs(char[][] grid, int i, int j, boolean[][] visited) {
+    static void dfs_iterative(char[][] grid, int i, int j, boolean[][] visited) {
         int rows = grid.length;
         int cols = grid[0].length;
 
@@ -46,6 +46,26 @@ public class Number_of_Islands {
         }
     }
 
+
+    static void dfs_recursive(char[][] grid, int i, int j, boolean[][] visited) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        // Check boundaries and if the current cell is water ('0') or already visited
+        if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] == '0' || visited[i][j]) {
+            return; // Base case: out of bounds or water or already visited
+        }
+
+        // Mark the current cell as visited
+        visited[i][j] = true;
+
+        // Explore the four possible directions: Down, Up, Right, Left
+        dfs_recursive(grid, i + 1, j, visited); // Down
+        dfs_recursive(grid, i - 1, j, visited); // Up
+        dfs_recursive(grid, i, j + 1, visited); // Right
+        dfs_recursive(grid, i, j - 1, visited); // Left
+    }
+
     // Function to count the number of islands
     static int numIslands(char[][] grid) {
         if (grid == null || grid.length == 0 || grid[0].length == 0) return 0;
@@ -58,7 +78,7 @@ public class Number_of_Islands {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (grid[i][j] == '1' && !visited[i][j]) {
-                    dfs(grid, i, j, visited);
+                    dfs_recursive(grid, i, j, visited);
                     islandCount++;  
                 }
             }
