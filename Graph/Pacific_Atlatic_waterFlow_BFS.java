@@ -37,7 +37,7 @@ public class Pacific_Atlatic_waterFlow_BFS {
             pacific_queue.offer(new int[] {0, j});
         }
 
-        // Loop 2: Add all cells in the leftmost column to Pacific Queue
+        // Loop 2: Add all cells in the leftmost column to Pacific  Queue
         for(int i = 0; i < rows; i++){
             pacific_queue.offer(new int[] {i, 0});
         }
