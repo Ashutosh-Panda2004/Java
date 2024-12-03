@@ -20,16 +20,36 @@ public class Pacific_Atlatic_waterFlow_BFS {
         Queue<int[]> pacific_queue = new LinkedList<>();
         Queue<int[]> atlantic_queue = new LinkedList<>();
 
-        for(int i=0; i<rows; i++){
-            pacific_queue.offer(new int[] {0,i});
-            atlantic_queue.offer(new int[]{i, cols-1});
-        }
-        for(int i=1; i<cols; i++){
-            pacific_queue.offer(new int[] {i,0});
+
+        /*
+        Understanding the Initialization:
+            Pacific Ocean Borders:
+                Top Row: All cells in the top row can flow into the Pacific Ocean.
+                Leftmost Column: All cells in the leftmost column can flow into the Pacific Ocean.
+
+            Atlantic Ocean Borders:
+                Bottom Row: All cells in the bottom row can flow into the Atlantic Ocean.
+                Rightmost Column: All cells in the rightmost column can flow into the Atlantic Ocean.
+        */
+
+        // Loop 1: Add all cells in the top row to Pacific Queue
+        for(int j = 0; j < cols; j++){
+            pacific_queue.offer(new int[] {0, j});
         }
 
-        for(int i=0; i<cols-1; i++){
-            atlantic_queue.offer(new int[] {rows-1, i});
+        // Loop 2: Add all cells in the leftmost column to Pacific Queue
+        for(int i = 0; i < rows; i++){
+            pacific_queue.offer(new int[] {i, 0});
+        }
+
+        // Loop 3: Add all cells in the bottom row to Atlantic Queue
+        for(int j = 0; j < cols; j++){
+            atlantic_queue.offer(new int[] {rows - 1, j});
+        }
+
+        // Loop 4: Add all cells in the rightmost column to Atlantic Queue
+        for(int i = 0; i < rows; i++){
+            atlantic_queue.offer(new int[] {i, cols - 1});
         }
 
         ArrayList<ArrayList<Boolean>> pacific_ans = bfs(grid, pacific_queue, rows, cols);
