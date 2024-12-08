@@ -39,7 +39,7 @@ public class BFS_Cycle_Detection_UndirectedGraph {
                     visited[neighbor] = true;
                     parentArr[neighbor] = front;  // Update the parent of the neighbor
                 }
-                // If the neighbor is visited and is not the parent, a cycle is detected
+                // If the neighbor is visited BUT front ka parent nahi hai
                 else if (parentArr[front] != neighbor) { 
                     System.out.println("Front: " + front + " Neighbor: " + neighbor);
                     return true;

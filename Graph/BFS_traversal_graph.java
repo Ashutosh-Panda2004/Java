@@ -36,10 +36,6 @@ public class BFS_traversal_graph {
             }
 
         }
-
-
-
-
         
 
     }

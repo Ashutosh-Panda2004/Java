@@ -1,0 +1,1511 @@
+// FIND MINIMUM NUMBER OF EDGES IN A GRAPH 
+
+public static int number_of_edges(int n) {
+        if (n < 1) {
+            return -1; // Invalid input
+        }
+        if (n == 1) {
+            return 0; // Starting vertex is the target
+        }
+
+        // Initialize BFS
+        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visited = new boolean[n + 1];
+        
+        queue.offer(1);
+        visited[1] = true;
+        int edges = 0;
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            // Process all nodes at the current level
+            for (int i = 0; i < size; i++) {
+                int current = queue.poll();
+                
+                // Check possible next moves
+                int next1 = current + 1;
+                int next2 = current * 3;
+                
+                // If next1 is the target
+                if (next1 == n || next2 == n) {
+                    return edges + 1;
+                }
+                
+                // Enqueue next1 if valid and not visited
+                if (next1 <= n && !visited[next1]) {
+                    queue.offer(next1);
+                    visited[next1] = true;
+                }
+                
+                // Enqueue next2 if valid and not visited
+                if (next2 <= n && !visited[next2]) {
+                    queue.offer(next2);
+                    visited[next2] = true;
+                }
+            }
+            edges++;
+        }
+        
+        return -1; // If n is not reachable
+    }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+// FIND PATH IN A DIRECTED GRAPH
+ 
+import java.util.*;
+public class Main {
+    // Function to add a directed edge to the graph
+    static void addEdge(ArrayList<ArrayList<Integer>> graph, int v1, int v2) {
+        graph.get(v1).add(v2);
+    }
+    // Function to build the graph
+    static ArrayList<ArrayList<Integer>> buildGraph(int V, int E, Scanner sc) {
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>(V);
+        for(int i = 0; i < V; i++) {
+            graph.add(new ArrayList<>());
+        }
+        for(int i = 0; i < E; i++) {
+            int v1 = sc.nextInt();
+            int v2 = sc.nextInt();
+            addEdge(graph, v1, v2);
+        }
+        return graph;
+    }
+    // Function to perform DFS and check if path exists
+    static boolean dfs(ArrayList<ArrayList<Integer>> graph, int src, int dest, boolean[] visited) {
+        if(src == dest){
+            return true;
+        }
+        visited[src] = true;
+        for(int neighbor : graph.get(src)){
+            if(!visited[neighbor]){
+                boolean found = dfs(graph, neighbor, dest, visited);
+                if(found){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    // Function to check if path exists between src and dest
+    static boolean checkIfPathExists(ArrayList<ArrayList<Integer>> graph, int src, int dest) {
+        boolean[] visited = new boolean[graph.size()];
+        return dfs(graph, src, dest, visited);
+    }
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        // Read number of vertices and edges
+        int V = sc.nextInt();
+        int E = sc.nextInt();
+        // Build the graph
+        ArrayList<ArrayList<Integer>> graph = buildGraph(V, E, sc);
+        // Read source and destination vertices
+        int src = sc.nextInt();
+        int dest = sc.nextInt();
+        // Validate source and destination
+        if(src < 0 || src >= V || dest < 0 || dest >= V){
+            System.out.println("NO");
+            sc.close();
+            return;
+        }
+        // Check if path exists
+        boolean pathExists = checkIfPathExists(graph, src, dest);
+        // Print the result
+        if(pathExists){
+            System.out.println("YES");
+        }
+        else{
+            System.out.println("NO");
+        }
+        sc.close();
+    }
+}
+ 
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+// NUMBER OF ISLAND
+
+import java.util.Scanner;
+import java.util.*;
+class Result {
+    // Function to count the number of islands
+    static int countIslands(int mat[][], int m, int n) {
+        // Edge case: If the grid is empty
+        if (m == 0 || n == 0) {
+            return 0;
+        }
+        // Initialize a visited matrix to keep track of visited cells
+        boolean[][] visited = new boolean[m][n];
+        int islandCount = 0;
+        // Iterate through each cell in the grid
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                // If the cell is land and not visited
+                if (mat[i][j] == 1 && !visited[i][j]) {
+                    // Perform DFS to mark all connected lands
+                    dfs(mat, visited, i, j, m, n);
+                    // Increment the island count after a successful DFS
+                    islandCount++;
+                }
+            }
+        }
+        return islandCount;
+    }
+    // Helper function to perform DFS recursively (only 4 directions)
+    static void dfs(int mat[][], boolean[][] visited, int i, int j, int m, int n) {
+        // Check for out-of-bound indices or if the cell is water or already visited
+        if (i < 0 || i >= m || j < 0 || j >= n || mat[i][j] == 0 || visited[i][j]) {
+            return;
+        }
+        // Mark the current cell as visited
+        visited[i][j] = true;
+        // Explore only four directions: Up, Down, Left, Right
+        // Up
+        dfs(mat, visited, i - 1, j, m, n);
+        // Down
+        dfs(mat, visited, i + 1, j, m, n);
+        // Left
+        dfs(mat, visited, i, j - 1, m, n);
+        // Right
+        dfs(mat, visited, i, j + 1, m, n);
+    }
+}
+public class Main
+{
+    public static void main(String args[])
+    {
+        int m, n;
+        String str;
+        Result o1 = new Result();
+        Scanner sc = new Scanner(System.in);
+        m = sc.nextInt();
+        n = sc.nextInt();
+        
+        int[][] mat = new int[m][n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                mat[i][j] = sc.nextInt();
+
+        System.out.print(o1.countIslands(mat, m, n));
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// SHORTEST PATH IN BINARY MAZE 
+
+import java.util.*;
+
+import java.util.*;
+class Result {
+    static int shortestPath(int mat[][], int srcR, int srcC, int destR, int destC, int m, int n){
+        // Check if source and destination cells are valid
+        if (!isValidCell(srcR, srcC, m, n) || !isValidCell(destR, destC, m, n)) {
+            return -1;
+        }
+        // If source or destination cell is blocked, return -1
+        if (mat[srcR][srcC] == 0 || mat[destR][destC] == 0) {
+            return -1;
+        }
+        // If source and destination are the same
+        if (srcR == destR && srcC == destC) {
+            return 0;
+        }
+        // Define movement directions: Up, Down, Left, Right
+        int[] rowDir = {-1, 1, 0, 0};
+        int[] colDir = {0, 0, -1, 1};
+        // Initialize a visited matrix to keep track of visited cells
+        boolean[][] visited = new boolean[m][n];
+        visited[srcR][srcC] = true;
+        // Initialize BFS queue and enqueue the source cell with distance 0
+        Queue<int[]> queue = new LinkedList<>();
+        queue.offer(new int[]{srcR, srcC, 0});
+        while (!queue.isEmpty()) {
+            // Dequeue the front cell
+            int[] current = queue.poll();
+            int currentRow = current[0];
+            int currentCol = current[1];
+            int currentDist = current[2];
+            // Explore all four directions from the current cell
+            for (int i = 0; i < 4; i++) {
+                int newRow = currentRow + rowDir[i];
+                int newCol = currentCol + colDir[i];
+                int newDist = currentDist + 1;
+                // Check if the new cell is the destination
+                if (newRow == destR && newCol == destC && mat[newRow][newCol] == 1) {
+                    return newDist;
+                }
+                // If the new cell is valid, traversable, and not visited
+                if (isValidCell(newRow, newCol, m, n) && mat[newRow][newCol] == 1 && !visited[newRow][newCol]) {
+                    visited[newRow][newCol] = true; // Mark as visited
+                    queue.offer(new int[]{newRow, newCol, newDist}); // Enqueue with updated distance
+                }
+            }
+        }
+        // If the destination is not reachable
+        return -1;
+    }
+    static boolean isValidCell(int row, int col, int m, int n) {
+        return (row >= 0 && row < m && col >= 0 && col < n);
+    }
+}
+public class Main
+{
+    public static void main(String args[])
+    {
+        int m, n;
+        String str;
+        Result o1 = new Result();
+        Scanner sc = new Scanner(System.in);
+        m = sc.nextInt();
+        n = sc.nextInt();
+        
+        int[][] mat = new int[m][n];
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                mat[i][j] = sc.nextInt();
+        
+        int srcRow, srcCol, destRow, destCol;
+        srcRow = sc.nextInt();
+        srcCol = sc.nextInt();
+        destRow = sc.nextInt();
+        destCol = sc.nextInt();
+        
+        System.out.print(o1.shortestPath(mat, srcRow, srcCol, destRow, destCol, m, n));
+    }
+}
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// RECURSIVE DFS TRAVERSAL 
+
+import java.util.*;
+
+public class recursive_DFS_traversal_graph {
+
+    static void DFS_traversal(ArrayList<ArrayList<Integer>> graph, int start, Boolean[] visited, ArrayList<Integer> DFS_ans) {
+
+        visited[start] = true;
+        DFS_ans.add(start);  
+
+        for (int neighbor : graph.get(start)) {
+            if (!visited[neighbor]) {
+                DFS_traversal(graph, neighbor, visited, DFS_ans);  
+            }
+        }
+    }
+
+    static void addEdge(ArrayList<ArrayList<Integer>> graph, int v1, int v2, Boolean isBidir) {
+        graph.get(v1).add(v2);
+        if (isBidir) {
+            graph.get(v2).add(v1);  
+        }
+    }
+
+    public static void main(String args[]) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int v = sc.nextInt();
+
+        System.out.print("Enter the number of edges: ");
+        int e = sc.nextInt();
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < v; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        System.out.print("Is your graph biDirectional (true/false): ");
+        Boolean isBidir = sc.nextBoolean();
+
+        System.out.println("\nEnter all the vertices connections: ");
+        for (int i = 0; i < e; i++) {
+            int v1 = sc.nextInt();
+            int v2 = sc.nextInt();
+            addEdge(graph, v1, v2, isBidir);  // Add edge between v1 and v2
+        }
+
+        System.out.println("\nGraph generated:");
+        for (int i = 0; i < v; i++) {
+            System.out.print(i + ": ");
+            for (int j = 0; j < graph.get(i).size(); j++) {
+                System.out.print(graph.get(i).get(j) + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.print("\nEnter the starting point of the DFS traversal: ");
+        int start = sc.nextInt();
+
+        Boolean[] visited = new Boolean[v];
+        Arrays.fill(visited, false);  // Initialize all vertices as unvisited
+        ArrayList<Integer> DFS_ans = new ArrayList<>();
+
+        DFS_traversal(graph, start, visited, DFS_ans);
+
+        System.out.println("\nDFS traversal sequence: ");
+        for (int i : DFS_ans) {
+            System.out.print(i + " ");
+        }
+
+        sc.close();
+    }
+}
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// ITERATIVE DFS TRAVERSAL 
+
+/*
+
+DFS in Trees:
+    - Typically follows Preorder, Inorder, or Postorder traversal.
+        Preorder: Visit node, left, right.
+        Inorder: Visit left, node, right.
+        Postorder: Visit left, right, node.
+
+DFS in Graphs:
+    - Same traversal concept as trees, but requires a visited check to avoid revisiting nodes.
+    - Can be implemented recursively or iteratively.
+    - The traversal order depends on how you visit neighbors, but in general, it explores as deep as possible along one path before backtracking.
+
+Whenever you do DFS in graphs you always utilise a stack
+Whenever you do BFS in graphs you always utilise a queue
+*/
+
+
+import java.util.*;
+
+public class iterative_DFS_traversal_graph {
+
+    static void DFS_traversal(ArrayList<ArrayList<Integer>> graph, int start, Boolean[] visited, ArrayList<Integer> DFS_ans) {
+        Stack<Integer> stack = new Stack<>();
+        stack.push(start);
+
+        while (!stack.isEmpty()) {
+            int node = stack.pop();
+            if (!visited[node]) {
+                visited[node] = true;
+                DFS_ans.add(node);
+
+                for (int neighbor : graph.get(node)) {
+                    if (!visited[neighbor]) {
+                        stack.push(neighbor);
+                    }
+                }
+            }
+        }
+    }
+
+    static void addEdge(ArrayList<ArrayList<Integer>> graph, int v1, int v2, Boolean isBidir) {
+        graph.get(v1).add(v2);
+        if (isBidir) {
+            graph.get(v2).add(v1);
+        }
+    }
+
+    public static void main(String args[]) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int v = sc.nextInt();
+
+        System.out.print("Enter the number of edges: ");
+        int e = sc.nextInt();
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < v; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        System.out.print("Is your graph biDirectional (true/false): ");
+        Boolean isBidir = sc.nextBoolean();
+
+        System.out.println("\nEnter all the vertices connections: ");
+        for (int i = 0; i < e; i++) {
+            int v1 = sc.nextInt();
+            int v2 = sc.nextInt();
+            addEdge(graph, v1, v2, isBidir);
+        }
+
+        System.out.println("\nGraph generated:");
+        for (int i = 0; i < v; i++) {
+            System.out.print(i + ": ");
+            for (int j = 0; j < graph.get(i).size(); j++) {
+                System.out.print(graph.get(i).get(j) + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.print("\nEnter the starting point of the DFS traversal: ");
+        int start = sc.nextInt();
+
+        Boolean[] visited = new Boolean[v];
+        Arrays.fill(visited, false);
+        ArrayList<Integer> DFS_ans = new ArrayList<>();
+
+        DFS_traversal(graph, start, visited, DFS_ans);
+
+        System.out.println("\nDFS traversal sequence: ");
+        for (int i : DFS_ans) {
+            System.out.print(i + " ");
+        }
+
+        sc.close();
+    }
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// BFS TRAVERSAL 
+
+
+import java.util.*;
+
+public class BFS_traversal_graph {
+
+    static void BFS_traversal(ArrayList<ArrayList<Integer>> graph , int start, ArrayList<Integer>BFS_ans){
+
+        int vertices = graph.size();
+        Boolean visited[] = new Boolean[vertices];
+        Arrays.fill(visited, false);            // Remember this !!!
+        Queue<Integer> qu = new LinkedList<>();
+
+        qu.offer(start);
+        visited[start] = true;
+
+        while(!qu.isEmpty()){
+
+            int front = qu.poll();
+            BFS_ans.add(front);
+
+            for(int neighbor : graph.get(front)){
+                if(!visited[neighbor]){
+                    visited[neighbor] =  true;
+                    qu.offer(neighbor);
+                }
+            }
+
+        }
+        
+
+    }
+
+    static void addEdge(ArrayList<ArrayList<Integer>> graph, int v1, int v2, Boolean isBidir){
+
+        graph.get(v1).add(v2);
+
+        if(isBidir){
+            graph.get(v2).add(v1);
+        }
+
+    }
+
+    public static void main(String args[]){
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int v = sc.nextInt();
+
+        System.out.print("Enter the number of edges: ");
+        int e  = sc.nextInt();
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+
+        for(int i=0; i<v ; i++){
+            graph.add(new ArrayList<>());
+        }
+
+        System.out.print("Is your graph biDirectional (true/false): ");
+        Boolean isBidir = sc.nextBoolean();
+
+        System.out.println("\n Enter all the vertices connections: ");
+        for(int i=0; i<e; i++){
+            int v1 = sc.nextInt();
+            int v2 = sc.nextInt();
+            addEdge(graph, v1, v2, isBidir);
+        }
+
+        System.out.println("\n" + "Graph generated:");
+
+        for(int i=0; i<v; i++){
+            System.out.print(i + ": ");
+            
+            for(int j=0; j<graph.get(i).size(); j++){
+                System.out.print(graph.get(i).get(j) + " ");
+            }
+
+            System.out.println(" ");
+        }
+
+        System.out.print("\nEnter the starting point of the BFS traversal: ");
+        int start = sc.nextInt();
+
+        ArrayList<Integer>BFS_ans = new ArrayList<>();
+        BFS_traversal(graph, start, BFS_ans);
+
+        System.out.println("\nBFS traversal sequence: ");
+        for(int i : BFS_ans){
+            System.out.print(i + " ");
+        }
+
+
+
+        sc.close();
+
+
+
+
+
+    }
+    
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// CYCLE DETECTION IN  UNDIRECTED GRAPH 
+
+
+import java.util.*;
+
+public class BFS_CycleDetection_UndirectedGraph {
+
+
+    static Boolean BFS_isCycle( ArrayList<ArrayList<Integer>> graph, int start){
+
+
+        int v = graph.size();
+        int parentArr[] = new int[v];
+        for(int i=0; i<v; i++){
+            parentArr[i]= -1;
+        }
+        Boolean visited[] = new Boolean[v];
+        for(int i=0; i<v; i++){
+            visited[i] = false;
+        }
+
+        Queue<Integer> qu = new LinkedList<>();
+
+        qu.offer(start);
+        visited[start] = true;
+
+        while(!qu.isEmpty()){
+            int front = qu.poll();
+
+            for(int neighbor : graph.get(front)){
+                 // If the neighbor is not visited, mark it as visited and add to queue
+                if(!visited[neighbor]){
+                    qu.offer(neighbor);
+                    visited[neighbor] = true;
+                    parentArr[neighbor] = front; // Update the parent of the neighbor
+                }
+                // If the neighbor is visited and is not the parent, a cycle is detected
+                if(visited[neighbor] && parentArr[neighbor] != front){
+                    System.out.println("Front: " + front + " Neighbor: " + neighbor);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
+
+
+    }
+
+    static void addEdge(ArrayList<ArrayList<Integer>> graph, int v1, int v2, Boolean isBidir){
+
+        graph.get(v1).add(v2);
+
+        if(isBidir){
+            graph.get(v2).add(v1);
+        }
+
+    }
+
+    public static void main(String args[]){
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int v = sc.nextInt();
+
+        System.out.print("Enter the number of edges: ");
+        int e = sc.nextInt();
+
+        System.out.print("Is your graph biDirectional (true/false): ");
+        Boolean isBidir = sc.nextBoolean();
+
+
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for(int i=0; i<v; i++){
+            graph.add(new ArrayList<>());
+        }
+
+
+        System.out.print("\nEnter all the vertices connections (v1,v2) [0 based indexing only]: ");
+        for(int i=0; i<e; i++){
+
+            int v1 = sc.nextInt();
+            int v2 = sc.nextInt();
+
+            addEdge(graph, v1, v2, isBidir);
+        }
+
+        
+
+        System.out.println("\nGraph generated: ");
+        for(int i=0; i<v; i++){
+            System.out.print(i + " --> ");
+            for(int neighbors : graph.get(i)){
+                System.out.print(neighbors + " ");
+            }
+            System.out.println(" ");
+        }
+
+        System.out.print("\nEnter your starting vertex: ");
+        int start = sc.nextInt();
+
+
+        Boolean cycle = BFS_isCycle(graph, start);
+
+        if(cycle == true){
+            System.out.println("Cycle Detectmnbmnbmned !");
+        }
+        else{
+            System.out.println("Cycle NOT Detected !");
+        }
+
+        sc.close();
+
+
+        
+    }
+    
+}
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// DIJKASTRA ALGO 
+
+// The traversal used in the code for Dijkstra's algorithm is Greedy traversal, facilitated by a Priority Queue (min-heap).
+
+import java.util.*;
+
+// Custom class to represent an edge with a destination vertex and a weight
+class Edge {
+    int destination;
+    int weight;
+
+    Edge(int destination, int weight) {
+        this.destination = destination;
+        this.weight = weight;
+    }
+}
+
+public class Dijkstra_Algo {
+
+    // Method to add an edge to the graph (with weight)
+    static void addEdge(ArrayList<ArrayList<Edge>> graph, int v1, int v2, int weight, boolean isBidir) {
+        graph.get(v1).add(new Edge(v2, weight));
+
+        if (isBidir) {
+            graph.get(v2).add(new Edge(v1, weight));
+        }
+    }
+
+    // Dijkstra's algorithm using a priority queue
+    static void dijkstra(ArrayList<ArrayList<Edge>> graph, int source) {
+        int v = graph.size();
+
+        // dist array to store the shortest distance from the source to each vertex
+        int[] dist = new int[v];
+
+        // Initially, set all distances to a large number (infinity)
+        for (int i = 0; i < v; i++) {
+            dist[i] = Integer.MAX_VALUE;
+        }
+
+        // Distance to the source from itself is 0
+        dist[source] = 0;
+
+        // Priority queue to select the edge with the minimum distance so far
+        // Each element in the queue is an array [distance, vertex]
+        PriorityQueue<int[]> pq = new PriorityQueue<>( (a, b) -> a[0] - b[0] );
+        pq.add(new int[] {0, source});
+
+        // Visited array to keep track of processed vertices
+        boolean[] visited = new boolean[v];
+
+        // While there are vertices to process in the queue
+        while (!pq.isEmpty()) {
+            int[] current = pq.poll();
+            int currentDist = current[0];
+            int currentVertex = current[1];
+
+            // If we've already visited this vertex, skip it
+            if (visited[currentVertex]) continue;
+            visited[currentVertex] = true;
+
+            // Explore neighbors
+            for (Edge edge : graph.get(currentVertex)) {
+                int neighbor = edge.destination;
+                int newDist = currentDist + edge.weight;
+
+                // If a shorter path to neighbor is found
+                if (newDist < dist[neighbor]) {
+                    dist[neighbor] = newDist;
+                    pq.add(new int[] {newDist, neighbor});
+                }
+            }
+        }
+
+        // Print shortest distances from source
+        System.out.println("\nShortest distances from vertex " + source + ":");
+        for (int i = 0; i < v; i++) {
+            System.out.println("Vertex " + i + ": " + dist[i]);
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int v = sc.nextInt();
+
+        System.out.print("Enter the number of edges: ");
+        int e = sc.nextInt();
+
+        // Initialize graph with ArrayLists to store edges
+        ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+
+        // Create an empty ArrayList for each vertex
+        for (int i = 0; i < v; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        System.out.print("Is your graph biDirectional (true/false): ");
+        boolean isBidir = sc.nextBoolean();
+
+        System.out.println("\nEnter all the edges (v1 v2 weight): ");
+        for (int i = 0; i < e; i++) {
+            int v1 = sc.nextInt();
+            int v2 = sc.nextInt();
+            int weight = sc.nextInt();
+            addEdge(graph, v1, v2, weight, isBidir);
+        }
+
+        // Display the graph
+        System.out.println("\nGraph generated:");
+        for (int i = 0; i < v; i++) {
+            System.out.print(i + ": ");
+            for (Edge edge : graph.get(i)) {
+                System.out.print("(" + edge.destination + ", " + edge.weight + ") ");
+            }
+            System.out.println();
+        }
+
+        System.out.print("\nEnter the source vertex for Dijkstra's algorithm: ");
+        int source = sc.nextInt();
+
+        // Run Dijkstra's algorithm from the given source
+        dijkstra(graph, source);
+
+        sc.close();
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// BELLMAN FORD ALGO 
+
+import java.util.*;
+
+// Custom class to represent an edge with a destination vertex and a weight
+class Edge {
+    int destination;
+    int weight;
+
+    Edge(int destination, int weight) {
+        this.destination = destination;
+        this.weight = weight;
+    }
+}
+
+public class Bellman_Ford_Algo {
+
+    // Method to add an edge to the graph (with weight)
+    static void addEdge(ArrayList<ArrayList<Edge>> graph, int v1, int v2, int weight, boolean isBidir) {
+        graph.get(v1).add(new Edge(v2, weight));
+        if (isBidir) {
+            graph.get(v2).add(new Edge(v1, weight));
+        }
+    }
+
+    // Bellman-Ford algorithm
+    static void bellmanFord(ArrayList<ArrayList<Edge>> graph, int source) {
+        int V = graph.size();
+        int[] dist = new int[V];
+
+        // Initialize distances: infinity for all except source which is 0
+        for (int i = 0; i < V; i++) {
+            dist[i] = Integer.MAX_VALUE;
+        }
+        dist[source] = 0;
+
+        // Relax all edges V-1 times
+        for (int i = 0; i < V - 1; i++) {
+            for (int u = 0; u < V; u++) {
+                for (Edge edge : graph.get(u)) {
+                    int v = edge.destination;
+                    int w = edge.weight;
+                    if (dist[u] != Integer.MAX_VALUE && dist[u] + w < dist[v]) {
+                        dist[v] = dist[u] + w;
+                    }
+                }
+            }
+        }
+
+        // Check for negative weight cycles by trying to relax once more
+        boolean negativeCycle = false;
+        for (int u = 0; u < V; u++) {
+            for (Edge edge : graph.get(u)) {
+                int v = edge.destination;
+                int w = edge.weight;
+                if (dist[u] != Integer.MAX_VALUE && dist[u] + w < dist[v]) {
+                    negativeCycle = true;
+                    break;
+                }
+            }
+            if (negativeCycle) break;
+        }
+
+        if (negativeCycle) {
+            System.out.println("\nGraph contains a negative weight cycle reachable from the source.");
+        } else {
+            System.out.println("\nShortest distances from vertex " + source + ":");
+            for (int i = 0; i < V; i++) {
+                System.out.println("Vertex " + i + ": " + dist[i]);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int v = sc.nextInt();
+
+        System.out.print("Enter the number of edges: ");
+        int e = sc.nextInt();
+
+        // Initialize graph with ArrayLists to store edges
+        ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+
+        // Create an empty ArrayList for each vertex
+        for (int i = 0; i < v; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        System.out.print("Is your graph biDirectional (true/false): ");
+        boolean isBidir = sc.nextBoolean();
+
+        System.out.println("\nEnter all the edges (v1 v2 weight): ");
+        for (int i = 0; i < e; i++) {
+            int v1 = sc.nextInt();
+            int v2 = sc.nextInt();
+            int weight = sc.nextInt();
+            addEdge(graph, v1, v2, weight, isBidir);
+        }
+
+        // Display the graph
+        System.out.println("\nGraph generated:");
+        for (int i = 0; i < v; i++) {
+            System.out.print(i + ": ");
+            for (Edge edge : graph.get(i)) {
+                System.out.print("(" + edge.destination + ", " + edge.weight + ") ");
+            }
+            System.out.println();
+        }
+
+        System.out.print("\nEnter the source vertex for Bellman-Ford algorithm: ");
+        int source = sc.nextInt();
+
+        // Run Bellman-Ford from the given source
+        bellmanFord(graph, source);
+
+        sc.close();
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//01 KNAPSACK 
+
+import java.util.*;
+
+class Result {
+
+    static int knapSackRec(int[] val, int[] weight, int i, int remainingCapacity) {
+        // Base cases
+        if (i == val.length || remainingCapacity == 0) {
+            return 0;
+        }
+        // If current item can't fit, skip it
+        if (weight[i] > remainingCapacity) {
+            return knapSackRec(val, weight, i+1, remainingCapacity);
+        } else {
+            // Two choices: pick or not pick
+            int notPick = knapSackRec(val, weight, i+1, remainingCapacity);
+            int pick = val[i] + knapSackRec(val, weight, i+1, remainingCapacity - weight[i]);
+            return Math.max(pick, notPick);
+        }
+    }
+
+    static int knapSackMemo(int[] val, int[] weight, int i, int remainingCapacity, int[][] dp) {
+        // Base cases
+        if (i == val.length || remainingCapacity == 0) {
+            return 0;
+        }
+        // If already calculated, return the stored value
+        if (dp[i][remainingCapacity] != -1) {
+            return dp[i][remainingCapacity];
+        }
+        // If current item doesn't fit, skip it
+        if (weight[i] > remainingCapacity) {
+            dp[i][remainingCapacity] = knapSackMemo(val, weight, i+1, remainingCapacity, dp);
+        } else {
+            // Pick or not pick
+            int notPick = knapSackMemo(val, weight, i+1, remainingCapacity, dp);
+            int pick = val[i] + knapSackMemo(val, weight, i+1, remainingCapacity - weight[i], dp);
+            dp[i][remainingCapacity] = Math.max(pick, notPick);
+        }
+        return dp[i][remainingCapacity];
+    }
+
+    // Tabulation function (not called, just provided)
+    static int knapSackTabulation(int[] val, int[] weight, int n, int capacity) {
+        // dp[i][w] will store the maximum value of using items from [0...i-1] with capacity w
+        int[][] dp = new int[n+1][capacity+1];
+
+        // Build table dp[][]
+        for (int i = 1; i <= n; i++) {
+            for (int w = 1; w <= capacity; w++) {
+                if (weight[i-1] <= w) {
+                    dp[i][w] = Math.max(val[i-1] + dp[i-1][w - weight[i-1]], dp[i-1][w]);
+                } else {
+                    dp[i][w] = dp[i-1][w];
+                }
+            }
+        }
+        return dp[n][capacity];
+    }
+
+    static int zeroOneKnapsack(int val[], int weight[], int n, int capacity) {
+        // Initialize dp array for memoization
+        int[][] dp = new int[n][capacity + 1];
+        for(int i=0; i<n; i++){
+            for(int w=0; w<=capacity; w++){
+                dp[i][w] = -1;
+            }
+        }
+        // Call the memoized version
+        return knapSackMemo(val, weight, 0, capacity, dp);
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        int n = Integer.parseInt(s.nextLine().trim());
+        int a[] = new int[n];
+        int b[] = new int[n];
+
+        for(int i=0; i<n; i++)
+            a[i] = s.nextInt();
+
+        String sp = (s.nextLine().trim());
+
+        for(int i=0; i<n; i++)
+            b[i] = s.nextInt();
+
+        sp = (s.nextLine().trim());
+        int cap = s.nextInt();
+
+        // This will use the memoized solution
+        int p = Result.zeroOneKnapsack(a, b, n, cap);
+
+        System.out.print(p);
+    }
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// MATRIX CHAIN MULTIPLICATION
+
+import java.util.Scanner;
+class Result {
+    static int recursion(int p[], int n, int i, int j) {
+        if (i == j) {
+            return 0;
+        }
+        int mini = Integer.MAX_VALUE;
+        for (int k = i; k <= j - 1; k++) {
+            int ans = recursion(p, n, i, k)
+                    + recursion(p, n, k + 1, j)
+                    + p[i - 1] * p[k] * p[j];
+            mini = Math.min(mini, ans);
+        }
+        return mini;
+    }
+    static int memo(int p[], int n, int i, int j, int[][] dp) {
+        if (i == j) {
+            return 0;
+        }
+        if (dp[i][j] != -1) {
+            return dp[i][j];
+        }
+        int mini = Integer.MAX_VALUE;
+        for (int k = i; k <= j - 1; k++) {
+            int ans = memo(p, n, i, k, dp)
+                    + memo(p, n, k + 1, j, dp)
+                    + p[i - 1] * p[k] * p[j];
+            mini = Math.min(mini, ans);
+        }
+        dp[i][j] = mini;
+        return mini;
+    }
+    static int matrixChainMultiplication(int p[], int n) {
+        // n is the number of matrices, so p has length n+1
+        int i = 1;
+        int j = n;
+        // Create dp of size (n+1) x (n+1) because we use 1-based indexing
+        int dp[][] = new int[n + 1][n + 1];
+        for (int a = 1; a <= n; a++) {
+            for (int b = 1; b <= n; b++) {
+                dp[a][b] = -1;
+            }
+        }
+        return memo(p, n, i, j, dp);
+    }
+}
+class Main
+{
+  public static void main(String[] args)
+  {
+    int a[]=new int[50];
+    int i,n;
+    Scanner s=new Scanner(System.in);
+    n = Integer.parseInt(s.nextLine().trim());
+    for(i=0;i<=n;i++)
+      a[i] = s.nextInt();
+    System.out.println(Result.matrixChainMultiplication(a,n));
+  }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// SUBSET SUM PROBLEM 
+
+import java.util.Scanner;
+class Result
+{
+    static Boolean recursion (int a[], int n, int sum, int i){
+        if(sum==0) return true;
+        if(i==n) return  false;
+        if(a[i]>sum){
+            return recursion(a, n, sum, i+1);
+        }
+        Boolean inclusion = recursion(a, n, sum-a[i], i+1);
+        Boolean exclusion = recursion(a, n, sum, i+1);
+        return inclusion || exclusion;
+    }
+    static Boolean memo(int a[], int n, int sum, int i, Boolean dp[][]){
+        if(sum==0) return true;
+        if(i==n) return  false;
+        if(dp[i][sum]!=null){
+            return dp[i][sum];
+        }
+        if(a[i]>sum){
+            return memo(a, n, sum, i+1, dp);
+        }
+        Boolean inclusion = memo(a, n, sum-a[i], i+1, dp);
+        Boolean exclusion = memo(a, n, sum, i+1, dp);
+        dp[i][sum] =  (inclusion || exclusion);
+        return dp[i][sum];
+    }
+  static int subsetSum(int a[], int n, int sum){
+    int i = 0;
+    //if(recursion(a, n, sum, i)) return 1;
+    //else return 0;
+      Boolean dp[][] = new Boolean[n+1][sum+1];
+      if(memo(a,n,sum, i, dp)) return 1;
+      else return 0;
+  }
+}
+class Main
+{
+  public static void main(String[] args)
+  {
+    int a[]=new int[50];
+    int i,n, sum;
+    Scanner s=new Scanner(System.in);
+    sum = Integer.parseInt(s.nextLine().trim());
+    n = Integer.parseInt(s.nextLine().trim());
+    for(i=0;i<n;i++)
+      a[i] = s.nextInt();
+    System.out.println(Result.subsetSum(a,n,sum));
+  }
+}
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// LONGEST COMMON SUBSEQUENCE 
+
+import java.util.Scanner;
+
+class Result
+{
+    static int memoization(String str1, String str2, int i, int j , int dp[][]){
+        if(i>=str1.length() || j>=str2.length()){
+            return 0;
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        int ans =0;
+        if(str1.charAt(i)==str2.charAt(j)){
+            ans = 1 + memoization(str1, str2, i+1, j+1, dp);
+        }
+        else{
+            ans = 0 + Math.max(memoization(str1, str2, i+1, j, dp), memoization(str1, str2, i, j+1, dp));
+        }
+        dp[i][j] = ans;
+        return ans;
+    }
+    static int recursion(String str1, String str2, int i, int j){
+        if(i>=str1.length() || j>=str2.length()){
+            return 0;
+        }
+        int ans =0;
+        if(str1.charAt(i)==str2.charAt(j)){
+            ans = 1+recursion(str1, str2, i+1, j+1);
+        }
+        else{
+            ans = 0+ Math.max(recursion(str1, str2, i+1, j), recursion(str1, str2, i, j+1));
+        }
+        return ans;
+    }
+  static int longestCommonSubsequence(String str1, String str2){
+      //return recursion(str1, str2,0, 0);
+     int[][] dp = new int[str1.length()][str2.length()];
+      for(int i=0; i<dp.length; i++){
+          for(int j=0; j<dp[0].length; j++){
+              dp[i][j] = -1;
+          }
+      }
+      return memoization(str1, str2, 0, 0, dp);
+  }
+}
+class Main
+{
+  public static void main(String[] args)
+  {
+    Scanner scan = new Scanner(System.in);
+    int t;
+    t=Integer.parseInt(scan.nextLine().trim());
+    while(t>0)
+    {
+      t--;
+      String a = scan.nextLine().trim();
+      String b = scan.nextLine().trim();
+      System.out.println(Result.longestCommonSubsequence(a, b));
+    }
+    scan.close();
+  }
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// MINIMUM COST PATH TO LAST ELEMENT OF MATRIX 
+import java.util.Scanner;
+import java.util.*;
+class Result
+{
+      static int tabulation(int grid[][], int r, int c){
+        int dp[][] = new int[r][c];
+        for(int i=r-1; i>=0; i--){
+            for(int j=c-1; j>=0; j--){
+                if(i==r-1 && j==c-1){
+                    dp[i][j] = grid[i][j];
+                }
+                else{
+                    int down = (i + 1 < r) ? dp[i + 1][j] : Integer.MAX_VALUE;
+                    int right = (j + 1 < c) ? dp[i][j + 1] : Integer.MAX_VALUE;
+                    int rightDiagonal = (i + 1 < r && j + 1 < c) ? dp[i + 1][j + 1] : Integer.MAX_VALUE;
+                    dp[i][j] = grid[i][j] + Math.min(down, Math.min(right, rightDiagonal));
+                }
+            }
+        }
+        return dp[0][0];
+    }
+    static int memoization(int grid[][], int i , int j , int[][]dp){
+        if(i>=grid.length || j>=grid[0].length){
+            return Integer.MAX_VALUE;
+        }
+        if(i==grid.length-1 && j==grid[0].length-1){
+            return grid[i][j];
+        }
+        if(dp[i][j]!=-1){
+            return dp[i][j];
+        }
+        // down jaao
+        int down  = memoization(grid, i+1,j, dp);
+        // right jaao 
+        int right = memoization(grid, i, j+1, dp);
+        //right diagonal
+        int rightDiagonal = memoization(grid, i+1, j+1, dp);
+        // put in dp return it
+        dp[i][j] =  grid[i][j] + Math.min(down, Math.min(right, rightDiagonal));
+        return dp[i][j];
+    }
+    static int recursion(int grid[][], int i, int j){
+        if(i>=grid.length || j>=grid[0].length){
+            return Integer.MAX_VALUE;
+        }
+        if(i==grid.length-1 && j==grid[0].length-1){
+            return grid[i][j];
+        }
+        // down jaao
+        int down  = recursion(grid, i+1,j);
+        // right jaao 
+        int right = recursion(grid, i, j+1);
+        //right diagonal
+        int rightDiagonal = recursion(grid, i+1, j+1);
+        // return min path 
+        return grid[i][j] + Math.min(down, Math.min(right, rightDiagonal));
+    }
+    static int minCostPath(int cost[][], int m, int n){
+        int i=0;
+        int j =0;
+        // return recursion(cost,i,j);
+        // int dp[][] = new int[m][n];
+        // for (int x = 0; x < m; x++) {
+        //     Arrays.fill(dp[x], -1);
+        // }
+        // return memoization(cost, i, j, dp);
+        return tabulation(cost, m , n);
+    }
+}
+class Main
+{
+  public static void main(String[] args)
+  {
+    int a[][]=new int[1000][1000];
+    int i, j, m, n;
+    Scanner s=new Scanner(System.in);
+    m = s.nextInt();
+    n = Integer.parseInt(s.nextLine().trim());
+    for(i=0;i<m;i++)
+      for(j=0;j<n;j++)
+        a[i][j] = s.nextInt();
+    System.out.println(Result.minCostPath(a,m,n));
+  }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// COUNT NUMBER OF WAYS TO COEVER A DISTANCE
+
+
+import java.util.Scanner;
+
+class Result {
+
+    // Pure recursion
+    static int recursion(int d, int k) {
+        if (d < 0) {
+            return 0;
+        }
+        if (d == 0) {
+            return 1;
+        }
+        int result = 0;
+        for (int i = 1; i <= k; i++) {
+            result += recursion(d - i, k);
+        }
+        return result;
+    }
+
+    // Memoization approach (not called)
+    static int memoRecursion(int d, int k) {
+        int[] dp = new int[d+1];
+        for (int i = 0; i <= d; i++) {
+            dp[i] = -1;
+        }
+        return memoHelper(d, k, dp);
+    }
+
+    static int memoHelper(int d, int k, int[] dp) {
+        if (d < 0) {
+            return 0;
+        }
+        if (d == 0) {
+            return 1;
+        }
+        if (dp[d] != -1) {
+            return dp[d];
+        }
+        int result = 0;
+        for (int i = 1; i <= k; i++) {
+            result += memoHelper(d - i, k, dp);
+        }
+        dp[d] = result;
+        return result;
+    }
+
+    // Tabulation approach (not called)
+    static int tabulation(int d, int k) {
+        int[] dp = new int[d+1];
+        dp[0] = 1; // Base case
+        for (int dist = 1; dist <= d; dist++) {
+            for (int step = 1; step <= k; step++) {
+                if (dist - step >= 0) {
+                    dp[dist] += dp[dist - step];
+                }
+            }
+        }
+        return dp[d];
+    }
+
+    static int totalWaysToDistance(int d, int k) {
+        // Currently calling only the pure recursion function as requested
+        return recursion(d, k);
+    }
+}
+
+class Main {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        int n = Integer.parseInt(s.nextLine().trim());
+        int i = Integer.parseInt(s.nextLine().trim());
+        System.out.println(Result.totalWaysToDistance(n, i));
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+// TOPOLOGICAL SORT
+
+import java.util.*;
+
+// Class to represent a directed graph
+class Graph {
+    private int V; // Number of vertices
+    private LinkedList<Integer>[] adj; // Adjacency list
+
+    // Constructor
+    public Graph(int v) {
+        V = v;
+        adj = new LinkedList[v];
+        for (int i = 0; i < v; i++) {
+            adj[i] = new LinkedList<>();
+        }
+    }
+
+    // Function to add an edge to the graph
+    public void addEdge(int v, int w) {
+        adj[v].add(w);
+    }
+
+    // Recursive function for DFS
+    private void dfs(int v, boolean[] visited, Stack<Integer> stack) {
+        // Mark the current node as visited
+        visited[v] = true;
+
+        // Recur for all the vertices adjacent to this vertex
+        for (int neighbor : adj[v]) {
+            if (!visited[neighbor]) {
+                dfs(neighbor, visited, stack);
+            }
+        }
+
+        // Push the current vertex to the stack after processing its neighbors
+        stack.push(v);
+    }
+
+    // Function to perform topological sort
+    public List<Integer> topologicalSort() {
+        Stack<Integer> stack = new Stack<>();
+        boolean[] visited = new boolean[V]; // Mark all vertices as not visited
+
+        // Call the recursive helper function for all unvisited vertices
+        for (int i = 0; i < V; i++) {
+            if (!visited[i]) {
+                dfs(i, visited, stack);
+            }
+        }
+
+        // Extract elements from the stack to get the topological order
+        List<Integer> result = new ArrayList<>();
+        while (!stack.isEmpty()) {
+            result.add(stack.pop());
+        }
+
+        return result;
+    }
+
+    // Main function to test the topological sort
+    public static void main(String[] args) {
+        Graph g = new Graph(6); // Create a graph with 6 vertices
+        g.addEdge(5, 2);
+        g.addEdge(5, 0);
+        g.addEdge(4, 0);
+        g.addEdge(4, 1);
+        g.addEdge(2, 3);
+        g.addEdge(3, 1);
+
+        System.out.println("Topological Sort of the given graph:");
+        System.out.println(g.topologicalSort());
+    }
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////
